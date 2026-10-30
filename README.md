@@ -1,6 +1,8 @@
 # Earth · Moon · Sun Simulator
 
-**English** · [فارسی](README.fa.md)
+**English** · [فارسی](README.fa.md) · [Español](README.es.md)
+
+### ▶ [Live demo](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=en)  ·  [Demo en español](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=es)  ·  [دموی فارسی](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=fa)
 
 An interactive, physically accurate 3D simulator of the Earth–Moon–Sun system that runs in a **single HTML file**. No server, no framework, no build step needed to use it: open `docs/index.html` in a browser or drop it on any static host.
 

@@ -2,7 +2,9 @@
 
 # شبیه‌ساز زمین · ماه · خورشید
 
-[English](README.md) · **فارسی**
+[English](README.md) · **فارسی** · [Español](README.es.md)
+
+### ▶ [دموی آنلاین](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=fa)  ·  [Live demo](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=en)  ·  [Demo en español](https://mahdial.github.io/Earth-Moon-Sun-simulator/?lang=es)
 
 یک شبیه‌ساز سه‌بعدی، تعاملی و دقیق از منظومه‌ی زمین–ماه–خورشید که در **یک فایل HTML** اجرا می‌شود. نیازی به سرور خاص و فریم‌ورک نیست: فایل `docs/index.html` را در مرورگر باز کنید یا روی هر هاست ایستا بگذارید.
 
