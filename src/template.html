@@ -185,6 +185,18 @@ select,input[type=datetime-local]{background:var(--panel2);border:1px solid var(
 
 <div id="loader"><div><div class="orb"></div><div data-i18n="loading">در حال آماده‌سازی شبیه‌ساز…</div></div></div>
 <div id="err"></div>
+<script>
+/* Show the loader (and page direction) in the right language before the big bundle is parsed. Same order as i18n.js detectLang(): ?lang= → saved choice → browser language. */
+(function(){try{
+  var T={fa:['فارسی','rtl','در حال آماده‌سازی شبیه‌ساز…'],en:['English','ltr','Preparing the simulator…'],es:['Español','ltr','Preparando el simulador…']};
+  var l=new URLSearchParams(location.search).get('lang');
+  if(!T[l]){try{l=localStorage.getItem('sim-lang')}catch(e){l=null}}
+  if(!T[l]){l=((navigator.languages&&navigator.languages[0])||navigator.language||'fa').slice(0,2).toLowerCase()}
+  if(!T[l])l='fa';
+  var d=document.documentElement;d.lang=l;d.dir=T[l][1];
+  var e=document.querySelector('#loader [data-i18n]');if(e)e.textContent=T[l][2];
+}catch(e){}})();
+</script>
 <script>/*__BUNDLE__*/</script>
 </body>
 </html>

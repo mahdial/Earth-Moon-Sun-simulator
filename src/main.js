@@ -264,6 +264,7 @@ const o_labels = () => S.opt.labels;
 // ---------------- start ----------------
 (async function start() {
   try {
+    applyStatic();   // translate the static page (loader, buttons, tabs) before the textures load
     measure();
     await W.loadAll();
     const id = (location.hash || '').replace('#', '');
