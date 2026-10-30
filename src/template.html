@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#04060d">
+<meta name="description" content="شبیه‌ساز تعاملی و دقیق زمین، ماه و خورشید: فصل‌ها، شب و روز، فازهای ماه، قفل جزرومدی و خسوف و کسوف">
+<title>شبیه‌ساز زمین، ماه و خورشید</title>
+<style>
+:root{
+  --bg:#04060d; --panel:rgba(10,14,28,.90); --panel2:rgba(20,27,48,.92); --line:rgba(255,255,255,.12);
+  --txt:#e9edf7; --mut:#9aa7c7; --acc:#ffb84d; --acc2:#5cc8ff; --good:#7be0a4; --bad:#ff7a7a;
+  --r:14px; --font:Vazirmatn,"IRANSans","Segoe UI",Tahoma,"Noto Sans Arabic","Noto Naskh Arabic",system-ui,sans-serif;
+}
+html:not([lang=fa]){--font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:var(--font);font-size:14px;line-height:1.75}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab;outline:none}
+#gl:active{cursor:grabbing}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lbl{position:absolute;left:0;top:0;white-space:nowrap;font-size:12px;line-height:1.35;padding:2px 7px;border-radius:7px;background:rgba(6,9,20,.62);border:1px solid rgba(255,255,255,.14);color:#f1f4fb;will-change:transform;text-shadow:0 1px 2px #000;display:none}
+.lbl.sun{color:#ffd98a;border-color:rgba(255,200,90,.45)} .lbl.earth{color:#8fd0ff;border-color:rgba(92,200,255,.45)} .lbl.moon{color:#e2e4ea}
+.lbl.warn{color:#ffb2a0;border-color:rgba(255,120,90,.45)} .lbl.tiny{font-size:11px;padding:1px 5px;opacity:.9}
+.lbl small{display:block;color:var(--mut);font-size:10.5px}
+.ring{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border:1.5px solid rgba(255,255,255,.7);border-radius:50%;display:none;pointer-events:none;box-shadow:0 0 8px rgba(255,255,255,.35)}
+
+/* ---------- top bar ---------- */
+#top{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:12px;padding:8px 12px;background:linear-gradient(180deg,rgba(4,6,13,.92),rgba(4,6,13,.55) 70%,transparent)}
+.brand{display:flex;align-items:center;gap:8px;white-space:nowrap;font-weight:700;font-size:15px}
+.brand i{display:inline-block;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7fd0ff,#1b5fa8 60%,#0a2a55);box-shadow:0 0 12px rgba(92,200,255,.55)}
+#lang{flex:0 0 auto;background:rgba(20,27,48,.75);border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--txt);font-size:12.5px}
+#tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1;padding:2px}
+#tabs::-webkit-scrollbar{display:none}
+#tabs button{flex:0 0 auto;border:1px solid var(--line);background:rgba(20,27,48,.75);border-radius:999px;padding:5px 14px;color:var(--mut);transition:.15s;white-space:nowrap}
+#tabs button:hover{color:var(--txt)}
+#tabs button.on{background:var(--acc);border-color:var(--acc);color:#1a1205;font-weight:700}
+
+/* ---------- panel ---------- */
+#panel{position:fixed;z-index:15;top:60px;right:12px;bottom:12px;width:352px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;overflow:hidden}
+#sheetToggle{display:none}
+#panelBody{overflow-y:auto;padding:14px 16px 18px;flex:1;scrollbar-width:thin;scrollbar-color:#3a4570 transparent}
+#panelBody h2{margin:0 0 6px;font-size:17px;color:var(--acc)}
+#panelBody h3{margin:16px 0 6px;font-size:13px;color:var(--acc2);font-weight:700;letter-spacing:0}
+#panelBody p{margin:6px 0;color:#d5dbeb}
+#panelBody ol,#panelBody ul{margin:6px 0;padding-inline-start:18px;padding-inline-end:0;color:#d5dbeb}
+#panelBody li{margin:4px 0}
+.note{background:rgba(255,184,77,.08);border:1px solid rgba(255,184,77,.28);border-radius:10px;padding:8px 10px;color:#ffe2b0;font-size:12.5px}
+.tip{background:rgba(92,200,255,.07);border:1px solid rgba(92,200,255,.25);border-radius:10px;padding:8px 10px;color:#cfeeff;font-size:12.5px}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.row.col{flex-direction:column}
+.btn{border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:5px 10px;font-size:12.5px;color:var(--txt);transition:.12s}
+.btn:hover{border-color:rgba(255,255,255,.35);background:#27335a}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:#1b1305;font-weight:700}
+.btn.on{background:rgba(92,200,255,.22);border-color:var(--acc2);color:#dff4ff}
+.btn.sm{padding:3px 8px;font-size:12px}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:8px 0}
+.seg button{flex:1;border:0;background:transparent;padding:6px 8px;color:var(--mut)}
+.seg button.on{background:var(--acc2);color:#04131c;font-weight:700}
+.chk{display:flex;align-items:center;gap:8px;margin:4px 0;color:#d5dbeb;cursor:pointer;user-select:none}
+.chk input{accent-color:var(--acc);width:16px;height:16px;margin:0}
+.rad{display:flex;gap:8px;align-items:flex-start;margin:7px 0;padding:7px 9px;border:1px solid var(--line);border-radius:10px;cursor:pointer;background:rgba(20,27,48,.55)}
+.rad.on{border-color:var(--acc);background:rgba(255,184,77,.10)}
+.rad input{accent-color:var(--acc);margin-top:5px}
+.rad b{display:block;font-size:13px}.rad span{font-size:12px;color:var(--mut);display:block;line-height:1.55}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:6px 0;padding:9px 11px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid var(--line)}
+.kv dt{color:var(--mut);font-size:12.5px}.kv dd{margin:0;font-weight:600;text-align:end;font-variant-numeric:tabular-nums}
+html[dir=rtl] .kv dd{direction:rtl}
+.sl{display:flex;align-items:center;gap:10px;margin:6px 0}
+.sl label{min-width:74px;color:var(--mut);font-size:12.5px}
+.sl output{min-width:54px;text-align:left;font-variant-numeric:tabular-nums;direction:ltr;font-weight:600}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:22px;background:transparent;margin:0;direction:ltr}
+input[type=range]::-webkit-slider-runnable-track{height:4px;background:rgba(255,255,255,.22);border-radius:4px}
+input[type=range]::-moz-range-track{height:4px;background:rgba(255,255,255,.22);border-radius:4px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--acc);margin-top:-7px;border:2px solid #1b1305}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--acc);border:2px solid #1b1305}
+select,input[type=datetime-local]{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:4px 8px;color:var(--txt);max-width:100%}
+.elist{display:flex;flex-direction:column;gap:5px;margin:6px 0}
+.elist button{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:start;border:1px solid var(--line);background:var(--panel2);border-radius:9px;padding:6px 9px;font-size:12.5px}
+.elist button:hover{border-color:var(--acc)} .elist button.on{border-color:var(--acc);background:rgba(255,184,77,.12)}
+.elist small{color:var(--mut)} .tag{font-size:11px;border-radius:6px;padding:0 6px;background:#2b3866;color:#cfe0ff;white-space:nowrap}
+.tag.t{background:#5a2a2a;color:#ffd0c0}.tag.a{background:#5a4b1a;color:#ffe6a0}.tag.p{background:#2a4a5a;color:#c4ecff}
+
+/* ---------- dock ---------- */
+#dock{position:fixed;z-index:15;bottom:12px;left:12px;right:376px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+#dock .when{display:flex;flex-direction:column;min-width:190px;line-height:1.35}
+#dock .when b{font-size:15px;unicode-bidi:plaintext;text-align:start} #dock .when small{color:var(--mut);unicode-bidi:plaintext;text-align:start}
+.ctl{display:flex;align-items:center;gap:6px}
+.ctl .play{width:42px;height:42px;border-radius:50%;border:0;background:var(--acc);color:#1b1305;font-size:18px;display:grid;place-items:center;font-weight:700}
+.spd{display:flex;flex-direction:column;gap:0;min-width:180px;flex:1 1 200px;max-width:340px}
+.spd .lab{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)} .spd .lab b{color:var(--txt)}
+.steps{display:flex;gap:4px;flex-wrap:wrap}
+#dateIn{direction:ltr;font-size:12.5px}
+
+/* ---------- inset ---------- */
+#inset{position:fixed;z-index:14;left:12px;bottom:calc(12px + var(--dockH,84px) + 10px);width:236px;height:262px;border:1px solid var(--line);border-radius:var(--r);background:rgba(4,6,13,.55);overflow:hidden;display:none}
+#inset .it{position:absolute;top:0;left:0;right:0;z-index:2;padding:5px 10px;font-size:12px;background:linear-gradient(180deg,rgba(4,6,13,.85),transparent);color:#dfe6fa;pointer-events:none}
+#inset .ib{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:5px 10px 6px;font-size:12px;background:linear-gradient(0deg,rgba(4,6,13,.85),transparent);color:var(--mut);text-align:center;pointer-events:none}
+#insetCanvas{position:absolute;inset:0;width:100%;height:100%;display:none}
+#viewbtns{position:fixed;z-index:14;bottom:calc(12px + var(--dockH,84px) + 10px);right:376px;margin-right:12px;display:flex;flex-direction:column;gap:6px}
+#viewbtns button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel);font-size:18px;display:grid;place-items:center}
+#viewbtns button:hover{border-color:var(--acc)}
+#hint{position:fixed;z-index:12;top:56px;left:calc(50% - 188px);transform:translateX(-50%);transition:opacity 1.5s;color:var(--mut);font-size:12px;background:rgba(6,9,20,.55);padding:3px 12px;border-radius:99px;pointer-events:none;white-space:nowrap}
+#loader{position:fixed;inset:0;z-index:50;background:var(--bg);display:grid;place-items:center;text-align:center;transition:opacity .5s}
+#loader .orb{width:64px;height:64px;border-radius:50%;margin:0 auto 14px;background:radial-gradient(circle at 35% 35%,#7fd0ff,#1b5fa8 60%,#0a2a55);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.12);box-shadow:0 0 28px rgba(92,200,255,.6)}}
+#err{position:fixed;z-index:60;left:12px;right:12px;bottom:12px;background:#4a1620;border:1px solid #ff7a7a;border-radius:10px;padding:10px 14px;display:none}
+
+/* ---------- small screens: bottom sheet ---------- */
+@media (max-width:860px){
+  #top{padding:6px 8px;gap:8px}
+  .brand span{display:none}
+  #hint{display:none}
+  #panel{top:auto;left:0;right:0;bottom:0;width:auto;max-height:44vh;height:44vh;border-radius:16px 16px 0 0;border-left:0;border-right:0;border-bottom:0;transition:height .25s}
+  #panel.collapsed{height:44px}
+  #sheetToggle{display:block;width:100%;height:44px;flex:0 0 44px;border:0;background:transparent;color:var(--mut);font-size:13px;border-bottom:1px solid var(--line)}
+  #sheetToggle:before{content:"";display:block;width:42px;height:4px;border-radius:4px;background:#46517a;margin:0 auto 4px}
+  #dock{top:50px;bottom:auto;left:8px;right:8px;padding:6px 10px;gap:6px 10px}
+  #dock .when{min-width:0;flex:1 1 150px}
+  #dock .when b{font-size:14px}
+  .spd{min-width:130px;flex:1 1 150px}
+  #dock .steps{display:none}
+  #dock.expanded .steps{display:flex}
+  #inset{left:8px;top:calc(var(--dockH,96px) + 58px);bottom:auto;width:132px;height:150px}
+  #inset .it{font-size:10.5px;padding:3px 6px}#inset .ib{display:none}
+  #viewbtns{right:8px;margin:0;bottom:calc(44vh + 10px);top:auto}
+  #panel.collapsed ~ #viewbtns{bottom:64px}
+}
+@media (max-width:860px) and (max-height:560px){
+  #panel{height:60vh;max-height:60vh;left:auto;width:50vw;border-radius:16px 0 0 0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="gl" tabindex="0" data-i18n-aria="canvas_a" aria-label="شبیه‌ساز سه‌بعدی زمین، ماه و خورشید"></canvas>
+<div id="labels"></div>
+
+<header id="top">
+  <div class="brand"><i></i><span data-i18n="brand">زمین · ماه · خورشید</span></div>
+  <nav id="tabs"></nav>
+  <select id="lang" data-i18n-aria="lang_a" aria-label="زبان"></select>
+</header>
+<div id="hint" data-i18n="hint">کشیدن: چرخش · چرخ ماوس یا دو انگشت: زوم · راست‌کلیک: جابه‌جایی · Space: توقف · R: بازنشانی دید</div>
+
+<aside id="panel">
+  <button id="sheetToggle" aria-expanded="true" data-i18n="sheet">توضیحات و تنظیمات ▾</button>
+  <div id="panelBody"></div>
+</aside>
+
+<div id="inset">
+  <div class="it" id="insetTitle"></div>
+  <canvas id="insetCanvas" width="472" height="524"></canvas>
+  <div class="ib" id="insetFoot"></div>
+</div>
+
+<div id="viewbtns">
+  <button id="zin" data-i18n-title="zin_t" data-i18n-aria="zin_a" title="نزدیک‌تر (+)" aria-label="نزدیک‌تر">＋</button>
+  <button id="zout" data-i18n-title="zout_t" data-i18n-aria="zout_a" title="دورتر (−)" aria-label="دورتر">－</button>
+  <button id="zreset" data-i18n-title="zreset_t" data-i18n-aria="zreset_a" title="بازگشت به نمای اولیه (R)" aria-label="نمای اولیه">⟲</button>
+</div>
+
+<section id="dock">
+  <div class="ctl">
+    <button class="play" id="play" data-i18n-title="play_t" data-i18n-aria="play_a" title="پخش / توقف (Space)" aria-label="پخش یا توقف">❚❚</button>
+    <button class="btn sm" id="rev" data-i18n="rev_b" data-i18n-title="rev_t" title="زمان به عقب">⏪ معکوس</button>
+  </div>
+  <div class="spd">
+    <div class="lab"><span data-i18n="spd_l">سرعت زمان</span><b id="spdLab">—</b></div>
+    <input type="range" id="spd" min="0" max="10" step="1" value="5" data-i18n-aria="spd_a" aria-label="سرعت زمان">
+  </div>
+  <div class="when"><b id="whenJ">—</b><small id="whenG">—</small></div>
+  <div class="steps">
+    <button class="btn sm" data-step="-2592000000" title="یک ماه عقب">−ماه</button>
+    <button class="btn sm" data-step="-86400000" title="یک روز عقب">−روز</button>
+    <button class="btn sm" data-step="-3600000" title="یک ساعت عقب">−ساعت</button>
+    <button class="btn sm" data-step="3600000" title="یک ساعت جلو">+ساعت</button>
+    <button class="btn sm" data-step="86400000" title="یک روز جلو">+روز</button>
+    <button class="btn sm" data-step="2592000000" title="یک ماه جلو">+ماه</button>
+    <input type="datetime-local" id="dateIn" data-i18n-aria="date_a" aria-label="انتخاب تاریخ و ساعت" min="1900-01-01T00:00" max="2100-12-31T23:59">
+    <button class="btn sm pri" id="now" data-i18n="now">اکنون</button>
+  </div>
+</section>
+
+<div id="loader"><div><div class="orb"></div><div data-i18n="loading">در حال آماده‌سازی شبیه‌ساز…</div></div></div>
+<div id="err"></div>
+<script>/*__BUNDLE__*/</script>
+</body>
+</html>

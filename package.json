@@ -1,0 +1,19 @@
+{
+  "name": "earth-moon-sun-simulator",
+  "version": "1.0.0",
+  "description": "Interactive 3D Earth–Moon–Sun simulator in a single HTML file: seasons, day & night, Moon phases, tidal locking, lunar & solar eclipses.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "check": "node tools/check-i18n.mjs && node tools/astro-sanity.mjs"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "astronomy-engine": "^2.1.19",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
